@@ -5,6 +5,8 @@ import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Dataset
+import sparkmodels.prototipe.SpNormalAD
 
 //import org.apache.spark.mllib.stat.Statistics
 import test.smirnov.KolmogorovSmirnovTest
@@ -15,7 +17,10 @@ object HelloWorld {
     val conf = new SparkConf().setAppName("HelloWorld").setMaster("local")
     val sc = new SparkContext(conf)
     val data: RDD[Double] = sc.parallelize(Seq(0.1, 0.15, 0.2, 0.3, 0.25))  // an RDD of sample data
-    val testResult = KolmogorovSmirnovTest.testOneSample(data, "norm", 0, 1)
+
+    println(data.collect().foreach(println))
+//    val testResult = KolmogorovSmirnovTest.testOneSample(data, "norm", 0, 1)
+    val testResult = SpNormalAD.testOneSample(data)
     println(testResult)
     println()
     sc.stop()

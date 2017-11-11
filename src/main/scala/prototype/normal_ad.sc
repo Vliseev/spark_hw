@@ -31,21 +31,21 @@
 //    (a._1+s"${b._1}+${b._2}+",b._1+b._2+a._2)
 //}
 
+import breeze.numerics.log
 import spire.random.Dist
-import scala.math.log
+import org.apache.commons.math3.distribution.NormalDistribution
 import scala.collection.mutable.Buffer
 
-val z = Dist.uniform(0.0, 1.0).sample[Buffer](5).view
-val I = Stream.from(0,2)
 
+def foo1(zs: Buffer[Double])={
+  val S = zs.zip(zs.reverse)
+    .map { case (x, y) =>log(x) * log(1 - y) }.sum
+  S
+}
 
-val S: Double = (I,z,z.reverseIterator.toStream).zipped.foldLeft(0:Double){
-  (sum, el:(Int,Double,Double)) => sum+(el._1.toDouble-1).*(log(el._2)+log(1-el._3))}
+val x = Dist.uniform(0.0, 1.0).sample[Buffer](10)
+val y = x.sortWith(_<_)
+val cdf=new NormalDistribution(0, 1)
+val z = y.map(x_ => cdf.cumulativeProbability(x_))
 
-
-val S1: Double = z.zip(z.reverse).zipWithIndex
-  .map{ case ((x, y), i) => (2 * i-1) * (log(x) + log(1 - y))}.sum
-
-val S2: Double = z.zip(z.reverse).zipWithIndex.foldLeft(0:Double){
-  case (sum, ((x,y),i)) => (2*i-1) *(log(x)+log(1-y))+sum
-  }
+foo1(z)
